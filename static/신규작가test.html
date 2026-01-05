@@ -664,7 +664,7 @@
             </div>
             <div style="text-align:right;">
               <div id="timer-badge" class="timer-badge safe">
-                ⏱ <span id="timer-text">남은 시간 계산 중...</span>
+                ⏱ <span id="timer-text">익일 오후 1시 마감 </span>
               </div>
               <div style="margin-top:4px;">
                 <span id="submit-status" class="status-chip">제출 전</span>
@@ -763,6 +763,7 @@
     <li>키워드 이해도 부족 / 키워드 취지·맥락 반영 미흡</li>
     <li>AI 생성 원고 의심 패턴 발견 (추후 TEST 제한 가능)</li>
     <li>표절·기존 문서 재사용 의심 문서 발견 (추후 TEST 제한 가능)</li>
+    <li>TEST마감시간 미준수</li>
   </ul>
 
   <p style="margin-top:8px;">
@@ -909,65 +910,31 @@
     }
   })();
 
-  // ───────── 타이머 ─────────
-  function updateTimer() {
-    if (!deadline) {
-      setText("timer-text", "마감 시간 정보 없음");
-      return;
-    }
-    const now = new Date();
-    const diffMs = deadline.getTime() - now.getTime();
-    const badge = $("#timer-badge");
+// ───────── 타이머 (비활성화 버전) ─────────
+// 숫자 카운트다운은 더 이상 사용하지 않고,
+// 배지에는 안내 문구만 고정으로 보여준다.
 
-    if (diffMs <= 0) {
-      setText("timer-text", "마감 시간이 지났습니다");
-      if (badge) {
-        badge.classList.remove("safe");
-        badge.classList.add("danger");
-      }
-      const submitBtn = $("#submit-test-btn");
-      const saveBtn = $("#save-draft-btn");
-      if (submitBtn) submitBtn.disabled = true;
-      if (saveBtn) saveBtn.disabled = true;
-      return;
-    }
+function startTimer() {
+  // 혹시라도 다른 곳에서 호출해도 아무 동작 안 하도록 처리
+  const badge = document.getElementById("timer-badge");
+  const text = document.getElementById("timer-text");
 
-    const diffSec = Math.floor(diffMs / 1000);
-    const hours = Math.floor(diffSec / 3600);
-    const minutes = Math.floor((diffSec % 3600) / 60);
-    const seconds = diffSec % 60;
-
-    const text =
-      (hours < 10 ? "0" + hours : hours) +
-      ":" +
-      (minutes < 10 ? "0" + minutes : minutes) +
-      ":" +
-      (seconds < 10 ? "0" + seconds : seconds);
-
-    setText("timer-text", text);
-
-    if (!badge) return;
-    badge.classList.remove("safe", "danger");
-    if (diffSec <= 60 * 30) {
-      badge.classList.add("danger");
-    } else if (diffSec > 60 * 60 * 3) {
-      badge.classList.add("safe");
-    }
+  if (badge) {
+    badge.classList.remove("danger");
+    badge.classList.add("safe");
+  }
+  if (text) {
+    text.textContent = "익일 오후 1시 마감";
   }
 
-  function startTimer() {
-    if (timerInterval) clearInterval(timerInterval);
-    updateTimer();
-    timerInterval = setInterval(updateTimer, 1000);
+  if (typeof timerInterval !== "undefined" && timerInterval) {
+    clearInterval(timerInterval);
   }
+  deadline = null;
+}
 
-  function computeDeadlineFromNow() {
-    const now = new Date();
-    const d = new Date(now.getTime());
-    d.setDate(d.getDate() + 1);
-    d.setHours(13, 0, 0, 0); // 익일 13시
-    return d;
-  }
+// updateTimer / computeDeadlineFromNow 는 더 이상 사용하지 않으므로 삭제해도 무방
+
 
   // ───────── 현재 원고를 PC에 TXT 파일로 저장 ─────────
 function downloadTxtToPC() {
@@ -1229,13 +1196,9 @@ async function startTest() {
     $("#test-body-textarea").value = data.body || "";
     testStatus = data.status || "pending";
 
-    if (data.deadlineAt) {
-      deadline = new Date(data.deadlineAt.replace(" ", "T"));
-    } else {
-      deadline = computeDeadlineFromNow();
-    }
+    // ⏱ 타이머 기능 제거: 마감시간은 안내문으로만 안내하고 실제 카운트다운은 사용하지 않음
+    deadline = null;
 
-    startTimer();
     updateCharCount();
     saveDraftToStorage();
   } catch (e) {
@@ -1446,15 +1409,8 @@ if (testStatus === "return") {
       return;
     }
 
-    const now = new Date();
-    if (!deadline || now.getTime() > deadline.getTime()) {
-      showError("마감 시간이 지나 제출이 불가합니다.");
-      const submitBtn = $("#submit-test-btn");
-      const saveBtn = $("#save-draft-btn");
-      if (submitBtn) submitBtn.disabled = true;
-      if (saveBtn) saveBtn.disabled = true;
-      return;
-    }
+    // ⏱ 타이머 제거: 마감 시간 기준으로 제출을 막지 않음
+    // (익일 오후 1시 마감은 안내문으로만 고지)
 
     const title = $("#test-title-input").value.trim();
     const body = $("#test-body-textarea").value.trim();
