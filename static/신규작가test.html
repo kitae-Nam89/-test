@@ -1,0 +1,1576 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>프리랜서 작가 TEST | 안내 ~ 작성 ~ 결과 대기</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        "Noto Sans KR", sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background: #f3f4f6;
+      color: #111827;
+    }
+
+    .page {
+      max-width: 1100px;
+      margin: 20px auto 40px;
+      background: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      padding: 24px 28px 32px;
+    }
+
+    h1 {
+      margin: 0 0 4px;
+      font-size: 22px;
+      font-weight: 700;
+      color: #111827;
+    }
+
+    .subtitle {
+      font-size: 13px;
+      color: #6b7280;
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-weight: 600;
+      font-size: 15px;
+      margin: 16px 0 8px;
+      color: #111827;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 4px;
+      color: #374151;
+    }
+
+    input[type="text"],
+    select {
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 6px;
+      border: 1px solid #d1d5db;
+      font-size: 13px;
+      outline: none;
+    }
+
+    input[type="text"]:focus,
+    select:focus {
+      border-color: #6366f1;
+      box-shadow: 0 0 0 1px rgba(99,102,241,0.3);
+    }
+
+    .row {
+      display: flex;
+      gap: 12px;
+    }
+
+    .row .col {
+      flex: 1;
+    }
+
+    .checkbox-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      margin-top: 10px;
+      font-size: 12px;
+      color: #4b5563;
+    }
+
+    .checkbox-row input[type="checkbox"] {
+      margin-top: 2px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: none;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.16s ease;
+      gap: 6px;
+    }
+
+    .btn-primary {
+      background: #4f46e5;
+      color: #ffffff;
+    }
+    .btn-primary:hover {
+      background: #4338ca;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 12px rgba(79,70,229,0.3);
+    }
+
+    .btn-secondary {
+      background: #e5e7eb;
+      color: #111827;
+    }
+    .btn-secondary:hover {
+      background: #d1d5db;
+    }
+
+    .btn-sm {
+      padding: 4px 10px;
+      font-size: 12px;
+      border-radius: 999px;
+    }
+
+    .helper-text {
+      font-size: 11px;
+      color: #9ca3af;
+    }
+
+    .divider {
+      height: 1px;
+      background: #e5e7eb;
+      margin: 16px 0;
+    }
+
+    .highlight-box {
+      background: #f9fafb;
+      border-radius: 8px;
+      border: 1px dashed #e5e7eb;
+      padding: 10px 12px;
+      font-size: 12px;
+      color: #4b5563;
+      line-height: 1.5;
+    }
+
+    .highlight-box strong {
+      color: #111827;
+    }
+
+    /* 진행 단계 표시 */
+    .steps {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 14px;
+      margin-top: 4px;
+      font-size: 12px;
+    }
+
+    .step-item {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #9ca3af;
+    }
+
+    .step-circle {
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      border: 2px solid #d1d5db;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      background: #ffffff;
+    }
+
+    .step-label {
+      white-space: nowrap;
+    }
+
+    .step-item.active .step-circle {
+      border-color: #4f46e5;
+      background: #eef2ff;
+      color: #4f46e5;
+    }
+    .step-item.active {
+      color: #4f46e5;
+      font-weight: 600;
+    }
+
+    .step-item.done .step-circle {
+      border-color: #22c55e;
+      background: #dcfce7;
+      color: #15803d;
+    }
+    .step-item.done {
+      color: #16a34a;
+    }
+
+    /* TEST 레이아웃 */
+    .test-layout {
+      display: flex;
+      gap: 18px;
+      margin-top: 14px;
+    }
+
+    .guide-pane {
+      flex: 0 0 36%;
+      border-radius: 10px;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      padding: 12px 14px;
+      font-size: 12px;
+      color: #4b5563;
+      max-height: 560px;
+      overflow-y: auto;
+    }
+
+    .guide-pane h3 {
+      margin-top: 0;
+      margin-bottom: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #111827;
+    }
+
+    .guide-pane h4 {
+      margin: 10px 0 4px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .guide-pane ul {
+      padding-left: 18px;
+      margin: 4px 0 6px;
+    }
+
+    .guide-pane li {
+      margin-bottom: 2px;
+    }
+
+    .editor-pane {
+      flex: 1;
+      border-radius: 10px;
+      border: 1px solid #e5e7eb;
+      background: #ffffff;
+      padding: 12px 14px 10px;
+      display: flex;
+      flex-direction: column;
+      max-height: 560px;
+    }
+
+    .editor-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .timer-badge {
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #f97316;
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .timer-badge.safe {
+      background: #16a34a;
+    }
+
+    .timer-badge.danger {
+      background: #dc2626;
+    }
+
+    .status-chip {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid #d1d5db;
+      color: #4b5563;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .status-chip.done {
+      border-color: #16a34a;
+      color: #16a34a;
+    }
+
+    .editor-title-input {
+      width: 100%;
+      padding: 7px 9px;
+      border-radius: 6px;
+      border: 1px solid #d1d5db;
+      font-size: 13px;
+      margin-bottom: 6px;
+    }
+
+    .editor-title-input:focus {
+      border-color: #6366f1;
+      box-shadow: 0 0 0 1px rgba(99,102,241,0.3);
+      outline: none;
+    }
+
+    .editor-textarea {
+      flex: 1;
+      width: 100%;
+      resize: none;
+      border-radius: 6px;
+      border: 1px solid #e5e7eb;
+      font-size: 13px;
+      padding: 8px 10px;
+      line-height: 1.6;
+      outline: none;
+    }
+
+    .editor-textarea:focus {
+      border-color: #6366f1;
+      box-shadow: 0 0 0 1px rgba(99,102,241,0.2);
+    }
+
+    .editor-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 6px;
+      font-size: 11px;
+      color: #6b7280;
+      gap: 8px;
+    }
+
+    .editor-footer .left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .editor-footer .right {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .char-count {
+      font-weight: 500;
+    }
+
+    .alert {
+      border-radius: 8px;
+      padding: 8px 10px;
+      font-size: 12px;
+      margin-top: 10px;
+    }
+
+    .alert-warning {
+      background: #fffbeb;
+      border: 1px solid #facc15;
+      color: #92400e;
+    }
+
+    .alert-success {
+      background: #ecfdf3;
+      border: 1px solid #22c55e;
+      color: #166534;
+    }
+
+    .alert-error {
+      background: #fef2f2;
+      border: 1px solid #f97373;
+      color: #991b1b;
+    }
+
+    /* 결과대기 화면 전용 박스 */
+    .result-box {
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 12px;
+      margin-top: 8px;
+      line-height: 1.6;
+    }
+    .result-wait {
+      background:#eff6ff;
+      border:1px solid #bfdbfe;
+      color:#1d4ed8;
+    }
+    .result-pass {
+      background:#ecfdf3;
+      border:1px solid #22c55e;
+      color:#166534;
+    }
+    .result-fail {
+      background:#fef2f2;
+      border:1px solid #fecaca;
+      color:#b91c1c;
+    }
+
+    .result-return {
+      background:#fefce8;
+      border:1px solid #facc15;
+      color:#92400e;
+    }
+
+    /* 모달 */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15,23,42,0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+    }
+
+    .modal {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 16px 18px 14px;
+      max-width: 380px;
+      width: calc(100% - 32px);
+      box-shadow: 0 18px 40px rgba(0,0,0,0.3);
+      animation: pop 0.14s ease-out;
+    }
+
+    @keyframes pop {
+      from { transform: scale(0.96) translateY(6px); opacity: 0; }
+      to { transform: scale(1) translateY(0); opacity: 1; }
+    }
+
+    .modal-title {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: #111827;
+    }
+
+    .modal-body {
+      font-size: 12px;
+      color: #4b5563;
+      margin-bottom: 12px;
+      line-height: 1.6;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .result-wait-box {
+      margin-top: 12px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      font-size: 12px;
+      color: #1d4ed8;
+      display: none;
+    }
+
+    @media (max-width: 880px) {
+      .test-layout {
+        flex-direction: column;
+      }
+      .guide-pane {
+        max-height: 260px;
+      }
+      .editor-pane {
+        max-height: 400px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <h1>프리랜서 작가 TEST</h1>
+    <div class="subtitle">
+      지원자 기본정보 입력 → TEST 안내 확인 → 원고 작성 → 제출 후 결과 대기까지 한 화면에서 진행됩니다.
+    </div>
+
+    <!-- 단계 표시 -->
+    <div class="steps">
+      <div class="step-item active" id="step-1">
+        <div class="step-circle">1</div>
+        <div class="step-label">안내 확인 & 정보 입력</div>
+      </div>
+      <div class="step-item" id="step-2">
+        <div class="step-circle">2</div>
+        <div class="step-label">TEST 작성</div>
+      </div>
+      <div class="step-item" id="step-3">
+        <div class="step-circle">3</div>
+        <div class="step-label">제출 완료 & 결과 대기</div>
+      </div>
+    </div>
+
+    <!-- STEP1 -->
+    <section id="applicant-section">
+      <div class="section-title">1. 지원자 기본 정보</div>
+      <div class="highlight-box">
+        <strong>※ 개인정보 수집 목적 안내</strong><br />
+        - 아래 정보는 TEST 응시자 식별 및 중복 지원 이력 확인을 위해 사용됩니다.<br />
+        - 세무·정산을 위한 주민번호 및 계좌정보는 <strong>합격 후 계약 단계</strong>에서 별도 안내 페이지를 통해 받습니다.
+      </div>
+
+      <div style="margin-top: 12px; display: flex; flex-direction: column; gap: 10px;">
+        <div class="row">
+          <div class="col">
+            <label for="name-input">이름</label>
+            <input id="name-input" type="text" placeholder="실명 기준으로 입력해 주세요" />
+          </div>
+          <div class="col">
+            <label for="birthyear-select">출생연도</label>
+            <select id="birthyear-select">
+              <option value="">선택해 주세요</option>
+            </select>
+            <div class="helper-text">예: 1992년생 → 1992 선택</div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col">
+            <label for="phone-last4-input">휴대폰 번호 뒷자리 4자리</label>
+            <input id="phone-last4-input" type="text" maxlength="4" placeholder="예: 4821" />
+            <div class="helper-text">
+              중복 지원 확인 및 본인 확인 용도로만 사용됩니다.
+            </div>
+          </div>
+        </div>
+
+        <div class="checkbox-row">
+          <input type="checkbox" id="info-consent-checkbox" />
+          <label for="info-consent-checkbox">
+            위 정보는 TEST 응시 확인 및 중복지원 방지 목적에 한해 사용되며,
+            채용 절차 종료 후 일정 기간 내 파기됨에 동의합니다.
+          </label>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="section-title">2. TEST 안내 요약</div>
+      <div class="highlight-box">
+        <strong>※ 실제 TEST 안내문 & 자료는 아래 TEST 화면 왼쪽 패널에서 다시 확인할 수 있습니다.</strong><br />
+        - AI 자동 작성, 기존 원고 재사용, 인터넷에서 그대로 가져온 글은 <strong>즉시 탈락</strong> 처리됩니다.<br />
+        - 글의 구성, 문장력, 독자 관점에서의 이해도, 가독성을 중심으로 평가합니다.<br />
+        - <strong>TEST 시작 버튼을 누르는 순간부터 익일 오후 1시까지</strong> 제출 시간이 부여됩니다.
+      </div>
+
+      <div style="margin-top: 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+        <div class="helper-text">
+          ※ TEST 시작 후에는 마감 시간이 자동 설정되며, 마감 이후에는 제출이 불가합니다.
+        </div>
+        <button class="btn btn-primary" id="open-warning-btn">
+          TEST 안내 확인 &amp; 시작하기
+        </button>
+      </div>
+
+      <div class="alert alert-error" id="error-alert" style="display:none; margin-top:10px;"></div>
+    </section>
+
+    <!-- STEP2 : TEST 작성 -->
+    <section id="test-section" style="display:none;">
+      <div class="section-title" style="display: flex; justify-content: space-between; align-items: center;">
+        <span>3. TEST 원고 작성</span>
+        <span id="applicant-summary" style="font-size:11px; color:#6b7280;"></span>
+      </div>
+
+      <div class="alert alert-warning" id="deadline-alert">
+        TEST 시작 시점 기준으로 <strong>익일 오후 1시까지</strong> 제출해야 합니다.
+        마감 시점 이후에는 제출 버튼이 비활성화됩니다.
+      </div>
+      <div class="alert alert-success" id="submit-alert" style="display:none;">
+        TEST 원고가 제출되었습니다. 담당자가 관리자 페이지에서 검수 후 합격 여부를 결정합니다.
+      </div>
+
+      <div class="test-layout">
+        <!-- 왼쪽: 안내 -->
+        <aside class="guide-pane">
+          <h3>이번 TEST 조건 & 작성 가이드</h3>
+
+          <p style="margin-bottom:6px;">
+            아래 내용은 <strong>이번 모집 공고에만 적용되는 TEST 조건</strong>입니다.
+            오른쪽 작성창에서 원고를 쓰실 때, 반드시 이 조건을 기준으로 맞춰 주세요.
+          </p>
+
+          <h4>1) TEST 기본 조건</h4>
+          <ul>
+            <li>글자 수: <span class="highlight">공백 제외 2,000자</span></li>
+            <li>키워드: <span class="highlight">키 영양제</span></li>
+            <li>
+              키워드 횟수:
+              <span class="highlight">제목 포함 총 6회</span><br />
+              (첫 단락 1회 / 끝 단락 1회 필수, 나머지 4회는 중간 단락 분산)
+            </li>
+            <li>제목 구성: <span class="highlight">[키 영양제] + 실제 후기 느낌의 문장</span></li>
+            <li>본문 톤: 실제 사용 후기 7할 + 정보·설명 3할 정도</li>
+          </ul>
+
+          <h4>2) 양식 가이드 (핵심 10가지)</h4>
+          <ul>
+            <li>성분·효과 확정 표현(100%, 보장 등) 사용 금지</li>
+            <li>제목에 제품명 직접 작성 금지</li>
+            <li>첫·끝 단락에 키워드 1회씩 필수</li>
+            <li>정보 설명보다 실제 사용 후기 비중이 더 크도록 작성</li>
+            <li>업체명은 1~2회만 언급</li>
+            <li>키워드는 항상 좌측 고정으로 작성</li>
+            <li>키워드 뒤에 조사(은/는/이/가 등) 붙이지 않기</li>
+            <li>비슷한 문구·내용 반복 작성 금지</li>
+            <li>두루뭉실한 표현보다 구체적인 경험 위주로 작성</li>
+            <li>과도한 과장·확정 표현 금지</li>
+          </ul>
+
+          <h4>3) 분량 & 형식</h4>
+          <ul>
+            <li>제목 1줄 + 본문 기본 1,200자 이상</li>
+            <li>문단을 적절히 나누고, 너무 긴 문장은 2문장 이상으로 나누기</li>
+          </ul>
+
+          <h4>4) 평가 기준 (예시)</h4>
+          <ul>
+            <li>문장력 / 구성 / 독자 관점 / 성의도</li>
+          </ul>
+
+          <h4>5) TEST 시간</h4>
+          <ul>
+            <li>TEST 시작 버튼 클릭 시점 기준으로 익일 오후 1시까지 제출</li>
+            <li>마감 시간 이후에는 제출 버튼이 비활성화됩니다.</li>
+          </ul>
+
+          <p style="margin-top:10px; font-size:11px; color:#9ca3af;">
+            ※ 실제 운영 시에는 이 영역에 지금까지 사용하던 TEST 안내문과 예시를 그대로 붙여 넣으면 됩니다.
+          </p>
+        </aside>
+
+        <!-- 오른쪽: 에디터 -->
+        <section class="editor-pane">
+          <div class="editor-header">
+            <div>
+              <input
+                id="test-title-input"
+                class="editor-title-input"
+                type="text"
+                placeholder="제목을 입력해 주세요 (필수)"
+              />
+              <div style="margin-top:2px;">
+                <span style="font-size:11px; color:#9ca3af;">※ 실전 작업 기준으로 평가됩니다.</span>
+              </div>
+            </div>
+            <div style="text-align:right;">
+              <div id="timer-badge" class="timer-badge safe">
+                ⏱ <span id="timer-text">남은 시간 계산 중...</span>
+              </div>
+              <div style="margin-top:4px;">
+                <span id="submit-status" class="status-chip">제출 전</span>
+              </div>
+            </div>
+          </div>
+
+          <textarea
+            id="test-body-textarea"
+            class="editor-textarea"
+            placeholder="여기에 TEST 원고를 작성해 주세요.&#10;&#10;※ 임시저장 후에도 마감 시간 전까지는 다시 수정·저장할 수 있습니다."
+          ></textarea>
+
+          <div class="editor-footer">
+            <div class="left">
+              <span>글자 수 (단순 문자 수 기준)</span>
+              <span id="char-count" class="char-count">0자</span>
+            </div>
+<div class="right">
+  <button type="button" class="btn btn-secondary btn-sm" id="save-draft-btn">
+    임시저장
+  </button>
+  <button type="button" class="btn btn-secondary btn-sm" id="download-txt-btn">
+    PC에 TXT로 저장
+  </button>
+  <button type="button" class="btn btn-primary btn-sm" id="submit-test-btn">
+    최종 제출
+  </button>
+  <button type="button" class="btn btn-secondary btn-sm" id="view-result-btn" style="display:none;">
+    결과 보기
+  </button>
+</div>
+          </div>
+
+          <!-- STEP2 내부 간단 안내 -->
+          <div class="result-wait-box" id="result-wait-box">
+            TEST 원고가 정상적으로 제출되었습니다.<br />
+            담당자가 <strong>관리자 페이지에서 순차적으로 검수</strong>한 뒤,<br />
+            합격 / 불합격 결과와 다음 안내를 정리하여 드립니다.
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <!-- STEP3 : 제출 완료 & 결과 대기 / 합격 / 불합격 -->
+    <section id="result-section" style="display:none; margin-top:18px;">
+      <div class="section-title">3. 제출 완료 & 결과 대기</div>
+
+      <!-- 1) 기본: 결과 대기 -->
+      <div id="result-waiting" class="result-box result-wait">
+        <strong>TEST 결과를 기다리고 있습니다.</strong><br />
+        담당자가 관리자 페이지에서 순차적으로 검수하는 중입니다.<br />
+        합격 여부가 결정되면, 공지된 방식에 따라 별도로 안내드립니다.<br /><br />
+        합격 통보를 받으신 뒤에는 <strong>아래 버튼이 활성화</strong>되며,<br />
+        그때 <strong>“신규 작가 등록하기” 버튼</strong>을 눌러 다음 단계로 이동하시면 됩니다.
+      </div>
+
+      <!-- 1-1) 반려(수정 요청) 상태 -->
+      <div id="result-return" class="result-box result-return" style="display:none;">
+        <strong>TEST 수정 요청(반려) 상태입니다.</strong><br />
+        담당자가 작성하신 원고를 검토한 결과,<br />
+        <strong>일부 표현 보완 또는 구성 수정이 필요하다</strong>고 판단되었습니다.<br /><br />
+        아래 버튼을 눌러 TEST 작성 화면으로 돌아가<br />
+        내용을 수정한 뒤 다시 <strong>최종 제출</strong>해 주세요.<br /><br />
+        <button type="button" class="btn btn-secondary btn-sm" id="btn-edit-again">
+          TEST 다시 수정하기
+        </button>
+      </div>
+
+      <!-- 2) 합격 상태 -->
+      <div id="result-pass" class="result-box result-pass" style="display:none;">
+        <strong>TEST 합격을 축하드립니다!</strong><br />
+        아래 버튼을 눌러 <strong>신규 작가 등록 페이지</strong>로 이동해 주세요.<br />
+        등록 및 계약서 작성 후, <strong>캡처 이미지를 담당자 카카오톡으로 전송</strong>하면 등록 절차가 완료됩니다.<br /><br />
+        <button type="button" class="btn btn-primary btn-sm" id="btn-go-register">
+          신규 작가 등록하기 (계약서 작성 단계로 이동)
+        </button>
+      </div>
+
+<!-- 3) 불합격 상태 -->
+<div id="result-fail" class="result-box result-fail" style="display:none;">
+  <strong>안타깝게도 이번 TEST에서는 함께하지 못하게 되었습니다.</strong><br />
+  아래 항목들을 종합적으로 검토한 결과,<br />
+  이번 모집 방향과의 적합도가 충분하지 않다고 판단되었습니다.<br /><br />
+
+  <ul style="margin:4px 0 0 18px; padding-left:0; text-align:left;">
+    <li>가이드 미준수 / 작성 규칙 및 안내사항 반영 부족</li>
+    <li>양식 미준수 / 구성·형식 일관성 부족</li>
+    <li>정보 전달력 약함 / 핵심 내용이 충분히 드러나지 않음</li>
+    <li>기승전결 구조 부족 / 문단 전개 및 흐름 미흡</li>
+    <li>불필요한 내용이 많음 / 주제와 직접 관련되지 않은 서술 과다</li>
+    <li>무의미한 글자 수 채우기 / 반복·군더더기 표현 다수</li>
+    <li>과도한 상황 설정 / 과장된 가상 서술 비중 과다</li>
+    <li>원고 이해도 부족 / 자료 해석·주제 파악 미흡</li>
+    <li>필력 부족 / 문장 완성도·가독성·어휘 운용 미흡</li>
+    <li>키워드 이해도 부족 / 키워드 취지·맥락 반영 미흡</li>
+    <li>AI 생성 원고 의심 패턴 발견 (추후 TEST 제한 가능)</li>
+    <li>표절·기존 문서 재사용 의심 문서 발견 (추후 TEST 제한 가능)</li>
+  </ul>
+
+  <p style="margin-top:8px;">
+    위 기준은 전체 지원자에게 공통으로 적용되며,<br />
+    개별 사유는 별도로 안내되지 않는 점 양해 부탁드립니다.
+  </p>
+
+  <p style="margin-top:8px;">
+    이후 별도 공고가 있을 경우, 안내에 따라 다시 지원해 주셔도 됩니다.
+  </p>
+</div>
+
+      <p style="margin-top:14px; font-size:12px; color:#6b7280;">
+        이 페이지는 닫으셔도 됩니다.  
+        추후 결과 및 합격자 안내는 공지된 방식에 따라 별도로 전달됩니다.
+      </p>
+    </section>
+  </div>
+
+  <!-- 경고 모달 -->
+  <div class="modal-backdrop" id="warning-modal-backdrop">
+    <div class="modal">
+      <div class="modal-title">TEST 시작 전 최종 안내</div>
+      <div class="modal-body">
+        - TEST 시작 버튼을 누르는 시점부터 <strong>익일 오후 1시까지</strong> 작성 및 제출 시간을 부여합니다.<br />
+        - 장난 지원, 허위정보 기재, AI 자동 작성, 기존 원고 재사용이 확인될 경우
+        향후 모든 모집에서 제외될 수 있습니다.<br /><br />
+        이 안내를 모두 이해했고, <strong>실제 작업 의사가 있는 경우에만</strong> 계속 진행해 주세요.
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary btn-sm" id="warning-cancel-btn">
+          취소
+        </button>
+        <button type="button" class="btn btn-primary btn-sm" id="warning-confirm-btn">
+          동의하고 TEST 시작
+        </button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // ───────── 전역 상태 ─────────
+  let applicant = {
+    name: "",
+    birthYear: "",
+    phoneLast4: ""
+  };
+  let testId = null;        // 서버 DB에 저장된 TEST ID
+  let deadline = null;      // 마감 시간 (Date 객체)
+  let timerInterval = null;
+  let submitted = false;
+  let testStatus = "waiting"; // "waiting" | "pending" | "pass" | "fail" | "return"
+
+  const STORAGE_KEY = "writer_test_draft_v1";
+
+  const $ = (selector) => document.querySelector(selector);
+
+  // ───────── 공통 유틸 ─────────
+  function setStep(step) {
+    const s1 = $("#step-1");
+    const s2 = $("#step-2");
+    const s3 = $("#step-3");
+
+    [s1, s2, s3].forEach((el) => {
+      el.classList.remove("active", "done");
+    });
+
+    if (step === 1) {
+      s1.classList.add("active");
+    } else if (step === 2) {
+      s1.classList.add("done");
+      s2.classList.add("active");
+    } else if (step === 3) {
+      s1.classList.add("done");
+      s2.classList.add("done");
+      s3.classList.add("active");
+    }
+  }
+
+  function setText(id, text) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = text;
+  }
+
+  function showError(msg) {
+    const el = $("#error-alert");
+    if (!el) return;
+    el.textContent = msg;
+    el.style.display = "block";
+  }
+
+  function clearError() {
+    const el = $("#error-alert");
+    if (!el) return;
+    el.textContent = "";
+    el.style.display = "none";
+  }
+
+  // 제출 상태 뱃지 업데이트
+  function updateSubmitStatusChip() {
+    const chip = $("#submit-status");
+    if (!chip) return;
+
+    chip.classList.remove("done");
+
+    if (!submitted) {
+      chip.textContent = "제출 전";
+      return;
+    }
+
+    // 제출 완료 상태
+    chip.classList.add("done");
+    if (testStatus === "pass") {
+      chip.textContent = "합격";
+    } else if (testStatus === "fail") {
+      chip.textContent = "불합격";
+    } else if (testStatus === "return") {
+      chip.textContent = "반려 - 수정 가능";
+    } else {
+      chip.textContent = "제출 완료";
+    }
+  }
+
+  // 공백 제외 글자 수
+  function getNonWhitespaceLength(text) {
+    if (!text) return 0;
+    return text.replace(/\s/g, "").length;
+  }
+
+  // 출생연도 옵션 초기화
+  (function initBirthYearOptions() {
+    const select = $("#birthyear-select");
+    if (!select) return;
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const minYear = 1960;
+    const maxYear = currentYear - 18;
+
+    for (let y = maxYear; y >= minYear; y--) {
+      const opt = document.createElement("option");
+      opt.value = String(y);
+      opt.textContent = y + "년생";
+      select.appendChild(opt);
+    }
+  })();
+
+  // ───────── 타이머 ─────────
+  function updateTimer() {
+    if (!deadline) {
+      setText("timer-text", "마감 시간 정보 없음");
+      return;
+    }
+    const now = new Date();
+    const diffMs = deadline.getTime() - now.getTime();
+    const badge = $("#timer-badge");
+
+    if (diffMs <= 0) {
+      setText("timer-text", "마감 시간이 지났습니다");
+      if (badge) {
+        badge.classList.remove("safe");
+        badge.classList.add("danger");
+      }
+      const submitBtn = $("#submit-test-btn");
+      const saveBtn = $("#save-draft-btn");
+      if (submitBtn) submitBtn.disabled = true;
+      if (saveBtn) saveBtn.disabled = true;
+      return;
+    }
+
+    const diffSec = Math.floor(diffMs / 1000);
+    const hours = Math.floor(diffSec / 3600);
+    const minutes = Math.floor((diffSec % 3600) / 60);
+    const seconds = diffSec % 60;
+
+    const text =
+      (hours < 10 ? "0" + hours : hours) +
+      ":" +
+      (minutes < 10 ? "0" + minutes : minutes) +
+      ":" +
+      (seconds < 10 ? "0" + seconds : seconds);
+
+    setText("timer-text", text);
+
+    if (!badge) return;
+    badge.classList.remove("safe", "danger");
+    if (diffSec <= 60 * 30) {
+      badge.classList.add("danger");
+    } else if (diffSec > 60 * 60 * 3) {
+      badge.classList.add("safe");
+    }
+  }
+
+  function startTimer() {
+    if (timerInterval) clearInterval(timerInterval);
+    updateTimer();
+    timerInterval = setInterval(updateTimer, 1000);
+  }
+
+  function computeDeadlineFromNow() {
+    const now = new Date();
+    const d = new Date(now.getTime());
+    d.setDate(d.getDate() + 1);
+    d.setHours(13, 0, 0, 0); // 익일 13시
+    return d;
+  }
+
+  // ───────── 현재 원고를 PC에 TXT 파일로 저장 ─────────
+function downloadTxtToPC() {
+  const rawTitle = ($("#test-title-input").value || "").trim();
+  const body = $("#test-body-textarea").value || "";
+
+  if (!rawTitle && !body) {
+    alert("저장할 내용이 없습니다.");
+    return;
+  }
+
+  // 파일명은 제목이 있으면 제목, 없으면 writer_test
+  const fileNameBase = (rawTitle || "writer_test").replace(/[\\/:*?"<>|]/g, "_");
+
+  // 🔴 TXT 안에는 "제목 → 빈 줄 → 본문" 구조로 저장
+  const text =
+    (rawTitle ? rawTitle + "\n\n" : "") +
+    body;
+
+  const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = fileNameBase + ".txt";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+
+  URL.revokeObjectURL(url);
+}
+
+  // ───────── 임시 저장 (브라우저 로컬) ─────────
+  function saveDraftToStorage() {
+    const title = $("#test-title-input").value.trim();
+    const body = $("#test-body-textarea").value;
+    const payload = {
+      applicant,
+      title,
+      body,
+      deadline: deadline ? deadline.toISOString() : null,
+      submitted,
+      testStatus,
+      testId
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+  }
+
+  // ───────── 임시 저장 (브라우저 로컬) ─────────
+  function saveDraftToStorage() {
+    const title = $("#test-title-input").value.trim();
+    const body = $("#test-body-textarea").value;
+    const payload = {
+      applicant,
+      title,
+      body,
+      deadline: deadline ? deadline.toISOString() : null,
+      submitted,
+      testStatus,
+      testId
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+  }
+
+  // ★ 로컬 초깃값 + 서버와 동기화 (삭제 / 상태 변경 반영)
+  async function loadDraftFromStorageIfExists() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return;
+      const data = JSON.parse(raw);
+      if (!data) return;
+
+      // 기본 정보 / 로컬 초깃값 반영
+      applicant = data.applicant || applicant;
+      deadline = data.deadline ? new Date(data.deadline) : null;
+      submitted = !!data.submitted;
+      testStatus = data.testStatus || "waiting";
+      testId = data.testId || null;
+
+      $("#name-input").value = applicant.name || "";
+      $("#birthyear-select").value = applicant.birthYear || "";
+      $("#phone-last4-input").value = applicant.phoneLast4 || "";
+
+      $("#test-title-input").value = data.title || "";
+      $("#test-body-textarea").value = data.body || "";
+
+      // 서버와 동기화: testId가 있는데 관리자가 상태를 바꾸거나 삭제했을 수 있음
+      if (testId) {
+        try {
+          const res = await fetch(
+            "/api/writer-test/get?testId=" + encodeURIComponent(testId)
+          );
+          const serverData = await res.json();
+
+          if (res.status === 404 || (serverData && serverData.error === "not_found")) {
+            // 관리자가 해당 TEST를 삭제한 경우 → 로컬 정보 초기화
+            testId = null;
+            submitted = false;
+            testStatus = "waiting";
+            deadline = null;
+
+            $("#test-title-input").value = "";
+            $("#test-body-textarea").value = "";
+
+            localStorage.removeItem(STORAGE_KEY);
+          } else if (res.ok && serverData && serverData.ok && serverData.test) {
+            const t = serverData.test;
+            testStatus = t.status || testStatus;
+            submitted = !!t.submittedAt;
+
+            $("#test-title-input").value = t.title || "";
+            $("#test-body-textarea").value = t.content || "";
+
+            if (t.deadlineAt) {
+              deadline = new Date(t.deadlineAt.replace(" ", "T"));
+            }
+          }
+        } catch (e) {
+          console.error("sync test status error", e);
+        }
+      }
+
+      if (applicant.name) {
+        $("#applicant-summary").textContent =
+          applicant.name +
+          " / " +
+          applicant.birthYear +
+          "년생 / 휴대폰 뒷자리 " +
+          applicant.phoneLast4;
+      }
+
+      if (submitted) {
+        updateSubmitStatusChip();
+        $("#submit-test-btn").disabled = true;
+        $("#save-draft-btn").disabled = true;
+        $("#result-wait-box").style.display = "block";
+
+        const viewBtn = $("#view-result-btn");
+        if (viewBtn) viewBtn.style.display = "inline-flex";
+
+        setStep(3);
+      } else {
+        updateSubmitStatusChip();
+      }
+
+      updateCharCount();
+    } catch (e) {
+      console.error("draft load error", e);
+    }
+  }
+
+// ───────── STEP1: 안내 & 기본 정보 ─────────
+async function openWarningModal() {
+  clearError();
+  const name = $("#name-input").value.trim();
+  const birthYear = $("#birthyear-select").value;
+  const phoneLast4 = $("#phone-last4-input").value.trim();
+  const consent = $("#info-consent-checkbox").checked;
+
+  if (!name) {
+    showError("이름을 입력해 주세요.");
+    return;
+  }
+  if (!birthYear) {
+    showError("출생연도를 선택해 주세요.");
+    return;
+  }
+  if (!phoneLast4 || phoneLast4.length !== 4 || !/^\d{4}$/.test(phoneLast4)) {
+    showError("휴대폰 번호 뒷자리 4자리를 정확히 입력해 주세요.");
+    return;
+  }
+  if (!consent) {
+    showError("개인정보 수집·이용 안내에 동의해 주세요.");
+    return;
+  }
+
+  // 1) TEST 마감 여부 먼저 확인
+  try {
+    const res = await fetch("/api/writer-test/config");
+    const data = await res.json();
+
+    if (!res.ok) throw new Error("config error");
+
+    if (!data.test_open) {
+      // TEST 마감 상태 → 안내문 단계에서 바로 막기
+      showError(
+        "현재 TEST는 마감된 상태입니다.\n" +
+          "안내문만 확인 가능하며, 다음 모집 공지 때 다시 지원해 주세요."
+      );
+      return;
+    }
+  } catch (e) {
+    console.error("config load error:", e);
+    showError(
+      "현재 TEST 상태를 확인하는 중 오류가 발생했습니다.\n잠시 후 다시 시도해 주세요."
+    );
+    return;
+  }
+
+  // 2) TEST 열림 상태인 경우에만 확인 모달 오픈
+  applicant = { name, birthYear, phoneLast4 };
+  $("#applicant-summary").textContent =
+    name + " / " + birthYear + "년생 / 휴대폰 뒷자리 " + phoneLast4;
+
+  $("#warning-modal-backdrop").style.display = "flex";
+}
+
+function closeWarningModal() {
+  $("#warning-modal-backdrop").style.display = "none";
+}
+
+// ───────── STEP2: TEST 시작 (서버 register 호출) ─────────
+async function startTest() {
+  closeWarningModal();
+  clearError();
+
+  try {
+    const res = await fetch("/api/writer-test/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: applicant.name,
+        birthYear: applicant.birthYear,
+        phoneLast4: applicant.phoneLast4
+      })
+    });
+    const data = await res.json();
+
+    if (!res.ok || !data.ok) {
+      console.error("register error:", data);
+
+      let msg =
+        "서버와 통신 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.";
+
+      // TEST 마감(백엔드 보호 로직) – 혹시라도 config 호출 실패 시 대비
+      if (data && data.reason === "closed") {
+        msg =
+          "현재 TEST는 마감된 상태입니다.\n" +
+          "안내문만 확인 가능하며, 다음 모집 공지에서 다시 지원해 주세요.";
+      } else if (data && data.reason === "blacklisted") {
+        // 블랙리스트 안내 (서버에서 403 + reason='blacklisted')
+        msg =
+          "이전에 지원 관련 이슈로 인해 현재 TEST 응시가 제한된 상태입니다.\n" +
+          "자세한 내용은 담당자에게 문의해 주세요.";
+      }
+
+      showError(msg);
+      return; // ★ 실패 시에는 절대 STEP2 화면으로 가지 않음
+    }
+
+    // ---- 여기까지 왔으면 register 성공 → TEST 화면으로 전환 ----
+    $("#applicant-section").style.display = "none";
+    $("#test-section").style.display = "";
+    setStep(2);
+
+    // 서버에서 받은 TEST 정보 세팅
+    testId = data.testId;
+    $("#test-title-input").value = data.title || "";
+    $("#test-body-textarea").value = data.body || "";
+    testStatus = data.status || "pending";
+
+    if (data.deadlineAt) {
+      deadline = new Date(data.deadlineAt.replace(" ", "T"));
+    } else {
+      deadline = computeDeadlineFromNow();
+    }
+
+    startTimer();
+    updateCharCount();
+    saveDraftToStorage();
+  } catch (e) {
+    console.error(e);
+    showError(
+      "서버와 통신 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요."
+    );
+  }
+}
+
+  // ───────── 글자 수 (공백 제외 2,000자 기준) ─────────
+  function updateCharCount() {
+    const textarea = $("#test-body-textarea");
+    const countEl = $("#char-count");
+    const submitBtn = $("#submit-test-btn");
+    const MIN_LEN = 2000;
+
+    const text = textarea ? textarea.value || "" : "";
+    const nonWsLength = getNonWhitespaceLength(text);
+
+    if (countEl) {
+      countEl.textContent =
+        "공백 제외 " +
+        nonWsLength.toLocaleString() +
+        "자 (최소 " +
+        MIN_LEN.toLocaleString() +
+        "자 이상 작성 시 제출 가능)";
+    }
+
+    if (submitBtn) {
+      submitBtn.disabled = submitted || nonWsLength < MIN_LEN;
+    }
+  }
+
+  // ───────── 임시 저장 버튼 (브라우저 로컬 + 서버) ─────────
+  async function handleSaveDraft() {
+    clearError();
+
+    if (!testId) {
+      alert("먼저 TEST를 시작해 주세요.\n(지원자 정보 입력 후 TEST 시작 버튼을 눌러야 합니다.)");
+      return;
+    }
+
+    const title = $("#test-title-input").value.trim();
+    const body = $("#test-body-textarea").value;
+
+    // 1) 브라우저 로컬에 먼저 저장
+    saveDraftToStorage();
+
+    // 2) 서버에도 임시 저장 (DB writer_tests.body / char_count 업데이트)
+    try {
+      const res = await fetch("/api/writer-test/save_draft", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          testId,
+          title,
+          body
+        })
+      });
+      const data = await res.json();
+
+      if (!res.ok || !data.ok) {
+        console.error("save_draft error:", data);
+        alert("브라우저에는 임시저장 되었지만,\n서버 임시저장 중 오류가 발생했습니다.");
+        return;
+      }
+    } catch (e) {
+      console.error(e);
+      alert("브라우저에는 임시저장 되었지만,\n서버 임시저장 중 오류가 발생했습니다.");
+      return;
+    }
+
+    alert("임시저장 되었습니다.\n동일 PC·브라우저에서 이어서 작성할 수 있고,\n서버에도 임시 내용이 저장되었습니다.");
+  }
+
+  // ───────── STEP3: 결과 보기 섹션 ─────────
+  async function showResultSection() {
+    clearError();
+
+    if (!testId) {
+      showError("TEST 정보가 없습니다. 페이지를 새로고침 후 다시 시작해 주세요.");
+      return;
+    }
+
+    try {
+      const res = await fetch("/api/writer-test/result?testId=" + encodeURIComponent(testId));
+      const data = await res.json();
+
+      if (res.status === 404 || (data && data.reason === "not_found")) {
+        console.error("result not found:", data);
+        showError("TEST 정보가 삭제되었거나 찾을 수 없습니다. 새로고침 후 다시 진행해 주세요.");
+        // 로컬 저장 정보도 함께 초기화
+        submitted = false;
+        testStatus = "waiting";
+        testId = null;
+        localStorage.removeItem(STORAGE_KEY);
+        updateSubmitStatusChip();
+        return;
+      }
+
+      if (!res.ok || data.ok === false) {
+        console.error("result error:", data);
+        showError("결과를 불러오는 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
+        return;
+      }
+
+      // 서버 기준 상태 반영
+      testStatus = data.status || "pending";
+      submitted = !!data.submittedAt;
+
+// 🔴 서버 상태가 'return'이면 항상 다시 수정·제출 가능해야 함
+if (testStatus === "return") {
+  submitted = false;
+}
+
+      if (!submitted) {
+        showError("먼저 TEST 원고를 최종 제출해 주세요.");
+        return;
+      }
+
+      saveDraftToStorage();
+      updateSubmitStatusChip();
+    } catch (e) {
+      console.error(e);
+      showError("결과를 불러오는 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
+      return;
+    }
+
+    $("#applicant-section").style.display = "none";
+    $("#test-section").style.display = "none";
+    $("#result-section").style.display = "block";
+    setStep(3);
+
+    updateResultUI(testStatus);
+  }
+
+  function updateResultUI(status) {
+    const waitEl = $("#result-waiting");
+    const returnEl = $("#result-return");
+    const passEl = $("#result-pass");
+    const failEl = $("#result-fail");
+
+    waitEl.style.display = "none";
+    if (returnEl) returnEl.style.display = "none";
+    passEl.style.display = "none";
+    failEl.style.display = "none";
+
+    if (status === "pass") {
+      passEl.style.display = "block";
+    } else if (status === "fail") {
+      failEl.style.display = "block";
+    } else if (status === "return") {
+      if (returnEl) returnEl.style.display = "block";
+    } else {
+      waitEl.style.display = "block";
+    }
+  }
+
+  // 반려 후 다시 수정하기
+  function reopenTestForEdit() {
+    // 결과 섹션 숨기고 작성 섹션 다시 표시
+    $("#result-section").style.display = "none";
+    $("#test-section").style.display = "block";
+    setStep(2);
+
+    // 다시 제출 가능하도록 상태 초기화
+    submitted = false;
+    testStatus = "pending";
+
+    const submitBtn = $("#submit-test-btn");
+    const saveBtn = $("#save-draft-btn");
+    if (submitBtn) submitBtn.disabled = false;
+    if (saveBtn) saveBtn.disabled = false;
+
+    const waitBox = $("#result-wait-box");
+    if (waitBox) waitBox.style.display = "none";
+
+    updateSubmitStatusChip();
+    saveDraftToStorage();
+  }
+
+  // 합격 시 신규작가등록 페이지로 이동
+  function goToRegisterPage() {
+    if (!applicant.name) {
+      alert("지원자 정보가 없습니다. 브라우저 캐시를 삭제하지 않았다면 TEST 페이지에서 다시 시도해 주세요.");
+      return;
+    }
+    const params = new URLSearchParams({
+      name: applicant.name,
+      birth: applicant.birthYear,
+      last4: applicant.phoneLast4
+    });
+    window.location.href = "신규작가등록.html?" + params.toString();
+  }
+
+  // ───────── 최종 제출: 서버 /submit 호출 ─────────
+  async function handleSubmitTest() {
+    clearError();
+
+    if (submitted) {
+      showError("이미 제출된 TEST입니다.");
+      return;
+    }
+
+    if (!testId) {
+      showError("TEST 정보가 없습니다. 페이지를 새로고침 후 다시 시작해 주세요.");
+      return;
+    }
+
+    const now = new Date();
+    if (!deadline || now.getTime() > deadline.getTime()) {
+      showError("마감 시간이 지나 제출이 불가합니다.");
+      const submitBtn = $("#submit-test-btn");
+      const saveBtn = $("#save-draft-btn");
+      if (submitBtn) submitBtn.disabled = true;
+      if (saveBtn) saveBtn.disabled = true;
+      return;
+    }
+
+    const title = $("#test-title-input").value.trim();
+    const body = $("#test-body-textarea").value.trim();
+
+    if (!title) {
+      showError("제목을 입력해 주세요.");
+      return;
+    }
+
+    const nonWsLength = getNonWhitespaceLength(body);
+    if (!body || nonWsLength < 2000) {
+      showError(
+        "본문 내용을 충분히 작성해 주세요. (공백 제외 2,000자 이상 작성해야 제출 가능합니다.)"
+      );
+      return;
+    }
+
+    const confirmMsg =
+      "TEST 원고를 제출하시겠습니까?\n\n" +
+      "제출 후에는 담당자가 관리자 페이지에서 검수하며,\n" +
+      "수정이 필요할 경우 별도로 안내드립니다.";
+    if (!window.confirm(confirmMsg)) {
+      return;
+    }
+
+    try {
+      const res = await fetch("/api/writer-test/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          testId,
+          title,
+          body
+        })
+      });
+      const data = await res.json();
+
+      if (!res.ok || !data.ok) {
+        console.error("submit error:", data);
+        let msg = "서버로 제출하는 과정에서 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.";
+        if (data.reason === "too_short") {
+          msg = "서버 기준 공백 제외 글자 수가 부족합니다. (현재 " + data.charCount + "자)";
+        } else if (data.reason === "deadline_over") {
+          msg = "마감 시간이 지나 제출이 불가합니다.";
+        }
+        showError(msg);
+        return;
+      }
+
+      submitted = true;
+      testStatus = "pending";
+      updateSubmitStatusChip();
+      const submitBtn = $("#submit-test-btn");
+      const saveBtn = $("#save-draft-btn");
+      if (submitBtn) submitBtn.disabled = true;
+      if (saveBtn) saveBtn.disabled = true;
+      $("#result-wait-box").style.display = "block";
+
+      const viewBtn = $("#view-result-btn");
+      if (viewBtn) viewBtn.style.display = "inline-flex";
+
+      setStep(3);
+      saveDraftToStorage();
+      $("#submit-alert").style.display = "block";
+    } catch (e) {
+      console.error(e);
+      showError("서버로 제출하는 과정에서 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
+    }
+  }
+
+  // ───────── DOM 로드 후 초기화 ─────────
+  window.addEventListener("DOMContentLoaded", function () {
+    // 기본은 1단계부터
+    setStep(1);
+    // 로컬/서버 상태 불러오기
+    loadDraftFromStorageIfExists();
+
+    // 🔴 이미 TEST를 최종 제출한 상태라면
+    //     페이지 재접속 시 바로 "결과 확인" 화면으로 이동
+    if (submitted) {
+      showResultSection();
+    }
+
+    // 글자 수 라벨 문구 변경
+    const countLabel = document.querySelector(".editor-footer .left span");
+    if (countLabel) {
+      countLabel.textContent = "글자 수 (공백 제외 기준)";
+    }
+
+    updateCharCount();
+
+    $("#open-warning-btn").addEventListener("click", openWarningModal);
+    $("#warning-cancel-btn").addEventListener("click", closeWarningModal);
+    $("#warning-confirm-btn").addEventListener("click", startTest);
+
+    $("#test-body-textarea").addEventListener("input", function () {
+      updateCharCount();
+      saveDraftToStorage();
+    });
+    $("#test-title-input").addEventListener("input", function () {
+      saveDraftToStorage();
+    });
+
+    $("#save-draft-btn").addEventListener("click", handleSaveDraft);
+    $("#submit-test-btn").addEventListener("click", handleSubmitTest);
+    $("#view-result-btn").addEventListener("click", showResultSection);
+
+    const downloadBtn = document.getElementById("download-txt-btn");
+    if (downloadBtn) downloadBtn.addEventListener("click", downloadTxtToPC);
+
+    const editAgainBtn = document.getElementById("btn-edit-again");
+    if (editAgainBtn) editAgainBtn.addEventListener("click", reopenTestForEdit);
+
+    const goBtn = document.getElementById("btn-go-register");
+    if (goBtn) goBtn.addEventListener("click", goToRegisterPage);
+  });
+</script>
+</body>
+</html>
