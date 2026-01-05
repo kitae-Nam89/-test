@@ -7,8 +7,8 @@ import os
 
 DB_PATH = "writer_test.db"
 
-# 🔐 관리자 비밀번호 / 세션 키 (배포 시 환경변수로 바꾸면 더 안전)
-SECRET_KEY = os.environ.get("ADMIN_SECRET_KEY", "change-this-secret-key")
+# 🔐 관리자 비밀번호 / 세션 키 (환경변수 기반)
+SECRET_KEY = os.environ.get("SECRET_KEY", "change-this-secret-key")
 ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "01045343815nam")  # 원하는 값으로 변경 가능
 
 # static 폴더에 있는 html을 그대로 서빙
@@ -70,6 +70,18 @@ def admin_page():
         return redirect("/admin_login")
     # 로그인 되어 있으면 관리자 페이지 HTML 제공
     return send_from_directory(app.static_folder, "admin_test.html")
+
+
+# 🚫 관리자 HTML 직접 접근 차단 (루트 경로: /admin_test.html)
+@app.route("/admin_test.html")
+def block_admin_html_root():
+    return redirect("/admin_login")
+
+
+# 🚫 관리자 HTML 직접 접근 차단 (정적 경로: /static/admin_test.html)
+@app.route("/static/admin_test.html")
+def block_admin_html_static():
+    return redirect("/admin_login")
 
 
 def get_db():
@@ -216,13 +228,8 @@ def api_register():
     if is_blacklisted(name, birth_year, phone_last4):
         return jsonify({"ok": False, "reason": "blacklisted"}), 403
 
+    # 단순 현재 시각(서버 시간)만 기록, 타이머 로직 제거
     now = datetime.now()
-    # 익일 13:00
-    tomorrow = now.date() + timedelta(days=1)
-    deadline_dt = datetime.combine(
-        tomorrow,
-        datetime.min.time()
-    ).replace(hour=13, minute=0, second=0, microsecond=0)
 
     conn = get_db()
     cur = conn.cursor()
@@ -260,9 +267,9 @@ def api_register():
             }
         )
 
-    # 새로 생성
+    # 새로 생성: created_at만 의미 있게 사용, deadline_at은 빈 문자열로 저장
     created_at = now.strftime("%Y-%m-%d %H:%M:%S")
-    deadline_at = deadline_dt.strftime("%Y-%m-%d %H:%M:%S")
+    deadline_at = ""  # 타이머 사용 안 하므로 표시용만 남김
 
     cur.execute(
         """
@@ -292,7 +299,6 @@ def api_register():
             "submittedAt": None,
         }
     )
-
 
 # ─────────────────────────
 # 3) 응시자: 중간 저장 (임시저장)
@@ -357,27 +363,13 @@ def api_submit():
             }
         ), 400
 
+    # 현재 시각 (타이머와 무관, 단순 제출 시각 기록용)
     now = datetime.now()
 
     conn = get_db()
     cur = conn.cursor()
-    cur.execute(
-        """
-        SELECT deadline_at FROM writer_tests
-        WHERE id=?
-        """,
-        (test_id,),
-    )
-    row = cur.fetchone()
-    if not row:
-        conn.close()
-        return jsonify({"ok": False, "reason": "not_found"}), 404
 
-    deadline_at = datetime.strptime(row["deadline_at"], "%Y-%m-%d %H:%M:%S")
-    if now > deadline_at:
-        conn.close()
-        return jsonify({"ok": False, "reason": "deadline_over"}), 400
-
+    # deadline_at은 더 이상 비교하지 않으므로 조회/검사 생략
     submitted_at = now.strftime("%Y-%m-%d %H:%M:%S")
 
     cur.execute(
