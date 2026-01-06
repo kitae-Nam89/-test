@@ -1,11 +1,22 @@
-from flask import Flask, request, jsonify, send_from_directory, session, redirect
+from flask import Flask, request, jsonify, send_from_directory, session, redirect, make_response
 from flask_cors import CORS
 import sqlite3
 from datetime import datetime, timedelta
 from functools import wraps
 import os
+import csv
+from io import StringIO
 
-DB_PATH = "writer_test.db"
+# 🔒 DB 경로
+# - 기본값: 현재 폴더의 writer_test.db (로컬 테스트용)
+# - Render에서는 환경변수 DB_PATH 를 /var/data/writer_test.db 로 설정해서
+#   영구 디스크에 저장하도록 사용
+DB_PATH = os.environ.get("DB_PATH", "writer_test.db")
+
+# 디렉터리가 포함된 경로라면, 없을 경우 자동 생성
+db_dir = os.path.dirname(DB_PATH)
+if db_dir:
+    os.makedirs(db_dir, exist_ok=True)
 
 # 🔐 관리자 비밀번호 / 세션 키 (환경변수 기반)
 SECRET_KEY = os.environ.get("SECRET_KEY", "change-this-secret-key")
@@ -182,6 +193,45 @@ def set_test_open(flag: bool):
         "ON CONFLICT(key) DO UPDATE SET value=excluded.value",
         ("test_open", "1" if flag else "0"),
     )
+    conn.commit()
+    conn.close()
+
+def export_writer_tests_csv():
+    """
+    writer_tests 전체 내용을 CSV 문자열로 반환.
+    - 관리자 페이지에서 다운로드하여 PC에 보관용
+    """
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM writer_tests ORDER BY id ASC")
+    rows = cur.fetchall()
+
+    # 컬럼명 추출
+    columns = [d[0] for d in cur.description]
+
+    output = StringIO()
+    writer = csv.writer(output)
+
+    # 헤더
+    writer.writerow(columns)
+
+    # 데이터
+    for r in rows:
+        writer.writerow([r[col] for col in columns])
+
+    conn.close()
+    return output.getvalue()
+
+
+def reset_writer_tests():
+    """
+    writer_tests 내용만 모두 삭제 (DB 파일 삭제 X, 구조 유지)
+    - test 진행 중에는 호출하면 안 되며,
+      반드시 test_open 이 0(종료)일 때만 사용해야 함.
+    """
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("DELETE FROM writer_tests")
     conn.commit()
     conn.close()
 
@@ -572,6 +622,33 @@ def api_update_status():
 
     return jsonify({"ok": True})
 
+# ─────────────────────────
+# 8-1) 관리자: 전체 백업 + 초기화 (TEST 종료용)
+# ─────────────────────────
+@app.route("/api/writer-test/export_and_reset", methods=["GET"])
+@require_admin
+def api_export_and_reset():
+    """
+    [안전 정책]
+    - config.test_open 이 '0'(닫힘)일 때만 동작.
+    - 1) writer_tests 전체를 CSV로 만들어 응답(다운로드)
+    - 2) 그 뒤 writer_tests 내용을 전부 삭제(reset)
+    """
+    # TEST가 열린 상태에서는 백업/초기화 금지
+    if get_test_open():
+        return jsonify({"ok": False, "reason": "test_open"}), 400
+
+    # 1) CSV 백업
+    csv_data = export_writer_tests_csv()
+
+    # 2) 내용 초기화 (DB 파일은 유지)
+    reset_writer_tests()
+
+    # 3) 브라우저에서 자동 다운로드 되도록 응답
+    response = make_response(csv_data)
+    response.headers["Content-Disposition"] = "attachment; filename=writer_tests_backup.csv"
+    response.headers["Content-Type"] = "text/csv; charset=utf-8"
+    return response
 
 # ─────────────────────────
 # 9) 관리자: 개별 삭제 / 전체 삭제
@@ -596,12 +673,16 @@ def api_delete():
 @app.route("/api/writer-test/delete_all", methods=["POST"])
 @require_admin
 def api_delete_all():
-    conn = get_db()
-    cur = conn.cursor()
-    cur.execute("DELETE FROM writer_tests")
-    conn.commit()
-    conn.close()
+    """
+    전체 삭제는 TEST가 닫힌 상태에서만 허용.
+    (테스트 진행 중 실수로 전체삭제 방지)
+    """
+    if get_test_open():
+        return jsonify({"ok": False, "reason": "test_open"}), 400
+
+    reset_writer_tests()
     return jsonify({"ok": True})
+
 
 
 # ─────────────────────────

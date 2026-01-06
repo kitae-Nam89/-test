@@ -445,25 +445,51 @@
       btn.dataset.open = isOpen ? "1" : "0";
     }
 
-    async function toggleTestOpen() {
-      const btn = $("#toggle-test-open-btn");
-      const current = btn.dataset.open === "1";
-      const next = !current;
+async function toggleTestOpen() {
+  const btn = $("#toggle-test-open-btn");
+  const current = btn.dataset.open === "1"; // 현재 상태 (true = 열림)
+  const next = !current;                    // 변경 후 상태
 
-      try {
-        const res = await fetch("/api/writer-test/set_open_flag", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ test_open: next })
-        });
-        const data = await res.json();
-        if (!res.ok || !data.ok) throw new Error("toggle error");
-        updateTestOpenUI(data.test_open);
-      } catch (e) {
-        console.error(e);
-        alert("TEST 열림/마감 상태 변경 중 오류가 발생했습니다.");
-      }
+  // 👉 열림 → 마감 으로 바꾸는 경우: 백업 + 초기화 안내
+  if (current && !next) {
+    const ok = confirm(
+      "TEST를 종료하시겠습니까?\n\n" +
+      "• 지원자 데이터를 CSV 파일로 PC에 백업하고,\n" +
+      "• 서버(DB)에 저장된 TEST 답안은 모두 초기화됩니다."
+    );
+    if (!ok) return;
+  }
+
+  try {
+    // 1) 열림/마감 플래그 먼저 변경
+    const res = await fetch("/api/writer-test/set_open_flag", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ test_open: next })
+    });
+    const data = await res.json();
+    if (!res.ok || !data.ok) throw new Error("toggle error");
+
+    // UI 갱신
+    updateTestOpenUI(data.test_open);
+
+    // 2) 방금 "열림 → 마감" 으로 변경된 경우에만
+    //    백업 + 초기화 API 호출 (CSV 다운로드)
+    if (current && !next) {
+      alert(
+        "TEST가 종료되었습니다.\n\n" +
+        "이제 지원자 데이터 백업 파일(CSV)이 다운로드되고,\n" +
+        "서버에 저장된 TEST 답안은 초기화됩니다."
+      );
+      // GET /api/writer-test/export_and_reset
+      // → CSV 다운로드 + writer_tests 내용 초기화
+      window.location.href = "/api/writer-test/export_and_reset";
     }
+  } catch (e) {
+    console.error(e);
+    alert("TEST 열림/마감 상태 변경 중 오류가 발생했습니다.");
+  }
+}
 
     // -------- 개별 TEST 본문 보기 --------
     async function openViewer(id) {
@@ -773,20 +799,32 @@
       }
     }
 
-    async function deleteAllTests() {
-      if (!confirm("정말 모든 TEST 데이터를 삭제하시겠습니까?")) return;
-      try {
-        const res = await fetch("/api/writer-test/delete_all", {
-          method: "POST"
-        });
-        const data = await res.json();
-        if (!res.ok || !data.ok) throw new Error("delete all error");
-        await loadTests();
-      } catch (e) {
-        console.error(e);
-        alert("전체 삭제 중 오류가 발생했습니다.");
-      }
-    }
+async function deleteAllTests() {
+  // 🔒 TEST가 열려 있는 동안에는 전체 삭제 금지
+  const btnToggle = $("#toggle-test-open-btn");
+  const isOpen = btnToggle.dataset.open === "1";
+  if (isOpen) {
+    alert("TEST 진행 중에는 전체 삭제를 할 수 없습니다.\n\n" +
+          "먼저 TEST를 마감한 뒤(상단 버튼),\n" +
+          "필요하다면 다시 전체 삭제를 실행해 주세요.");
+    return;
+  }
+
+  if (!confirm("정말 모든 TEST 데이터를 삭제하시겠습니까?")) return;
+
+  try {
+    const res = await fetch("/api/writer-test/delete_all", {
+      method: "POST"
+    });
+    const data = await res.json();
+    if (!res.ok || !data.ok) throw new Error("delete all error");
+    await loadTests();
+  } catch (e) {
+    console.error(e);
+    alert("전체 삭제 중 오류가 발생했습니다.");
+  }
+}
+
 
     // -------- 블랙리스트 --------
     async function loadBlacklist() {
