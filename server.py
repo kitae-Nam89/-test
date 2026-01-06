@@ -764,6 +764,11 @@ def api_blacklist_remove():
     return jsonify({"ok": True})
 
 
-if __name__ == "__main__":
+# 🔽 Render/gunicorn 환경에서도 앱이 import 될 때 DB 스키마를 반드시 만들어주기
+with app.app_context():
     init_db()
+
+
+if __name__ == "__main__":
+    # 로컬에서 python server.py 로 실행할 때만 이 부분이 실행됨
     app.run(host="0.0.0.0", port=5000, debug=True)
